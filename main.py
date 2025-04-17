@@ -1,3 +1,9 @@
+# ===== Autor =====
+# Sustituir con los datos del autor
+# Autor: croubs
+# Matrícula: XXXXX
+# =================
+
 import math
 
 # Para obtener los indices del alfabeto de 26 letras y saber cuáles son mayúsculas
@@ -160,8 +166,12 @@ def main():
       
     elif option == 6:
       print("=== Código fuente ===")
-      # Sustituir con el código fuente
-      print("Código fuente: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+      print("\n\n\n")
+
+      file = open("main.py", "r", encoding="utf-8")
+      print(file.read())
+      
+      print("\n\n\n")
 
     else:
       print("Opción inválida")
