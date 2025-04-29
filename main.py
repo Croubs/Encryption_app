@@ -1,32 +1,33 @@
 # ===== Autor =====
-# Sustituir con los datos del autor
 # Autor: croubs
-# Matrícula: XXXXX
+# Matrícula: XXXXXXX
 # =================
 
 import math
 
-# Para obtener los indices del alfabeto de 26 letras y saber cuáles son mayúsculas
+# Para obtener los índices del alfabeto de 26 letras y saber cuáles son mayúsculas
 def getIndexes(m:str):
   alphabet = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
   msg = list(m)
 
   isUpper = list(map(lambda c: c.isupper(), msg))
-  indexes = list(map(lambda c: alphabet.index(c.lower()), msg))
+  # Se usará el -1 para indicar espacios en el mensaje
+  indexes = list(map(lambda c: -1 if c == ' ' else alphabet.index(c.lower()), msg))
 
   return (indexes, isUpper)
 
-# Para transformar los indices del alfabeto en letras y devolver el mensaje como un string
+# Para transformar los índices del alfabeto en letras y devolver el mensaje como un string
 def getMessage(indexes:list, isUpper:list):
   alphabet = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
-  msg = list(map(lambda i, u: alphabet[(i%26)].upper() if u else alphabet[(i%26)], indexes, isUpper))
+  # El -1 indica que hay un espacio en el mensaje
+  msg = list(map(lambda i, u: (alphabet[(i%26)].upper() if u else alphabet[(i%26)]) if i > -1 else ' ', indexes, isUpper))
 
   return ''.join(msg)
 
 # Para desencriptar el mensaje hacer -n
 def cifradoCesar(m:str, n:int):
   (msg, isUpper) = getIndexes(m)
-  cesar = list(map(lambda c: (c + n) % 26, msg))
+  cesar = list(map(lambda c: ((c + n) % 26) if c > -1 else -1, msg))
 
   return getMessage(cesar, isUpper)
 
@@ -41,7 +42,7 @@ def isPrime(n:int):
 
   return True
 
-# Para obtener las llaver del RSA
+# Para obtener las llaves del RSA
 def getKeysRSA(p:int, q:int):
   n = p * q
   phi = (p - 1) * (q - 1)
@@ -65,16 +66,18 @@ def getKeysRSA(p:int, q:int):
 # Para cifrar con RSA
 def cifradoRSA(m:str, e:int, n:int):
   (msg, isUpper) = getIndexes(m)
-  rsa = list(map(lambda c: pow(c, e, n), msg))
+  # El -1 indica que hay un espacio en el mensaje, por lo que se pasará "sin cifrar"
+  rsa = list(map(lambda c: pow(c, e, n) if c > -1 else -1, msg))
 
   # Retornará la lista con los índices encriptados y la lista para saber cuáles eran mayúsculas
   return (rsa, isUpper)
 
 # Para descifrar con RSA
 def descifradoRSA(rsa:list, d:int, n:int, isUpper:list=[]):
-  decrypted = list(map(lambda c: pow(c, d, n), rsa))
+  # El -1 indica que hay un espacio en el mensaje
+  decrypted = list(map(lambda c: pow(c, d, n) if c > -1 else -1, rsa))
 
-  # Si no se envió una lista para saber cuáles carácteres son mayúsculas, considera todo como minúscula
+  # Si no se envió una lista para saber cuáles caracteres son mayúsculas, considera todo como minúscula
   if len(isUpper) == 0: isUpper = [False] * len(decrypted)
 
   return getMessage(decrypted, isUpper)
@@ -103,13 +106,13 @@ def main():
     if option == 1:
       print("=== Cifrado Cesar ===")
       msg = input("Mensaje: ")
-      n = int(input("Cantidad de carácteres que quiere recorrer el alfabeto: "))
+      n = int(input("Cantidad de caracteres que quiere recorrer el alfabeto: "))
       print("Mensaje encriptado:", cifradoCesar(msg, n))
 
     elif option == 2:
       print("=== Descifrado Cesar ===")
       msg = input("Mensaje encriptado: ")
-      n = int(input("Cantidad de carácteres que el alfabeto se movió: "))
+      n = int(input("Cantidad de caracteres que el alfabeto se movió: "))
       print("Mensaje desencriptado:", cifradoCesar(msg, -n))
     
     elif option == 3:
@@ -152,17 +155,19 @@ def main():
 
     elif option == 4:
       print("=== Descifrado RSA ===")
-      rsa = eval(input("Mensaje encriptado: "))
+      print("Ejemplo de cómo se debe ingresar su mensaje encriptado: 492,653,850,0,654")
+      rsa = eval("["+input("Mensaje encriptado: ")+"]")
       d = int(input("Llave privada: "))
       n = int(input("n: "))
 
       print("Mensaje desencriptado:", descifradoRSA(rsa, d, n))
 
     elif option == 5:
-      print("=== Autor ===")
-      # Sustituir con los datos del autor
+      print("=== Autor ===")    
       print("Autor: croubs")
-      print("Matrícula: XXXXX")
+      print("Matrícula: XXXXXXX")
+      print("\nEl cifrado César es un método de encriptación en el que las letras de un mensaje se recorren n cantidad de posiciones en el alfabeto; por ejemplo, con un desplazamiento de 3, la letra 'A' se convierte en 'D'.")
+      print("\nEl cifrado por RSA es un método de encriptación asimétrico que utiliza una clave pública para cifrar y una clave privada para descifrar mensajes. En este método, cada carácter se convierte en número y se cifra mediante una fórmula matemática que implica exponenciación modular con números primos, de este modo dificultando la tarea de descifrar el mensaje sin conocer las claves adecuadas.")
       
     elif option == 6:
       print("=== Código fuente ===")
